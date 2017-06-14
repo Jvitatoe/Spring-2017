@@ -1,0 +1,56 @@
+; In-Class LIL example
+; -----------------------------------------
+
+(defn retrieve
+  "(retrieve var memory)"
+  [ var memory ]
+  (println (str "called retrieve with args: " memory))
+  (if (= memory ())
+    nil
+    (if (= var (first (first memory)) )
+      (second (first memory))  
+      (retrieve  var (rest memory))
+    )
+  )
+)
+
+(defn store
+  [ value var memory ]
+  (if (= memory ())  
+      (list (list var value))   ; memory is empty, add (var value)
+      ; memory isn't empty
+      (if (= var (first (first memory)) )
+         (conj (rest memory) (list var value) )   ; first pair matches
+         (conj (store value var (rest memory)) (first memory) )  ; doesn't match
+      )
+  )
+)
+
+(defn third
+   [ list ]
+   (first (rest (rest list)))
+)
+
+(defn execS
+   [ code memory ]
+   ; stub (only <variable> = <number> implemented so far)
+   (store (third code) (first code) memory)
+)
+
+(defn execL
+   [ code memory ]
+   (if (= code ())
+       memory
+       (execL (rest code) (execS (first code) memory) )
+   )
+)
+
+(defn exec
+   [ code memory ]
+   (execP code memory)
+)
+
+(defn imper 
+      [prog]
+      (exec prog ())   
+)

@@ -1,0 +1,18 @@
+(defn mypastriAux [row col]
+  (println "calling mypastri on row " row ", col " col )
+       (if (<= row 2)
+         1
+         (if (= row col)
+           1
+           (+ (mypastriAux (- row 1) col) (mypastriAux (- row 1) (- col 1)))
+           )
+         )
+      )
+  
+
+(defn mypastri   [ row col ]
+  "get the value from pascal's triangle, denoted by the row and column entered"
+  (memoize (mypastriAux  row col)
+    )
+
+)

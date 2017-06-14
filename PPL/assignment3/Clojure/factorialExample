@@ -1,0 +1,11 @@
+(defn myFactorial
+ "(myFactorial n) => n!"
+ [n]
+ (if (<= n 1)
+     1
+     (do
+        (println n)
+        (* n (myFactorial (- n 1) ) )
+     )
+ )
+)

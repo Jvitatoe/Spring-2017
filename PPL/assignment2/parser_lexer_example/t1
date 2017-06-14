@@ -1,0 +1,13 @@
+global a,b,c
+
+def ignite()
+end
+
+def f(x)
+end
+
+def g(r,s)
+end
+
+def h(p,q,r)
+end
