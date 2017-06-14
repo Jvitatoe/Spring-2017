@@ -1,0 +1,114 @@
+(comment problem a)
+
+ (defn sumTerms [row]
+   
+   (if (nil? (second row))
+     '(1)
+     (cons (+ (first row) (second row)) (sumTerms (rest row)))
+     )   
+   
+   )
+ 
+ (defn pastri [row col previousRow currentRow] 
+  (if (= currentRow row)
+     (nth previousRow col)
+     (pastri row col (cons 1 (sumTerms previousRow)) (+ currentRow 1))
+     ) 
+ )
+
+
+(defn mypastri [ row col ]
+  ( pastri row col '() 0 )
+  )
+
+(comment problem b)
+
+(defn mymerge [ listA listB ]
+  (cond
+    (= (count listA) 0) (if (= (count listB) 0) 
+                          '()
+                          listB
+                          )
+    (= (count listB) 0) (if (= (count listA) 0) 
+                          '()
+                          listA
+                          )
+    (<= (first listA) (first listB)) (cons (first listA) (mymerge (rest listA) listB))
+    (<= (first listB) (first listA)) (cons (first listB) (mymerge listA (rest listB)))                                       
+    )  
+)
+
+(comment problem c)
+
+(defn mymergesort [ list ]
+  (cond
+    (> (count list) 1) (mymerge (mymergesort (take (/ (count list) 2) list)) (mymergesort (nthrest list (/ (count list) 2))))
+    true  list
+     )
+    )
+
+(comment problem d)
+
+
+(defn addToTree [valueToAdd tree]
+  
+  (cond
+    (empty? tree) (list valueToAdd nil nil)
+    :else (cond 
+            (< valueToAdd (first tree)) 
+                 (cons (first tree) (list (addToTree valueToAdd (second tree)) (nth tree 2)))
+            (> valueToAdd (first tree ))
+                 (cons (first tree) (list (second tree) (addToTree valueToAdd (nth tree 2) )))
+                                  
+            (=  valueToAdd (first tree ) )  tree
+            )
+    
+    )
+  
+  )
+
+
+(defn buildbst [valuelist bst] 
+  
+    (cond 
+      (empty? valuelist)  bst
+      :else (buildbst (rest valuelist) (addToTree (first valuelist) bst) )
+    
+    )
+  )
+
+(defn mybuildbst [valuelist]
+  
+     (buildbst valuelist ())
+     
+  
+  )
+
+
+
+(defn myiot [bst]
+  
+  (if (empty? bst)
+    '()
+    (concat (myiot (nth bst 1)) (cons (first bst) (myiot (nth bst 2))))
+    )
+  
+  )
+
+
+(comment 
+(println  "----------------test cases ---------------" )
+(println "pascal's triangle test. Should yield 88749815264600. Result: " (mypastri 50 22))   
+
+(println "merge test. should yield ( 1 3 4 5 6 10 11 12). Result: " (mymerge '( 1 4 7 11) '( 3 5 6 10 12 ) ) )
+
+
+(println "mergesort test. Should yield ( 1 2 3 4 5 6 7). Result: " (mymergesort '(3 1 7 5 2 6 4 )))
+
+
+(println "binary search tree test. Should yield (3 (1 nil nil) (7 (5 nil nil) nil ) ). Result: " (mybuildbst '(3 1 7 5) ))
+
+
+(println "in order traversal test. Should yield ( 1 3 5 7 ). Result: " (myiot '(3 (1 nil nil) (7 (5 nil nil) nil ) )))
+
+)

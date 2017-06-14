@@ -1,0 +1,102 @@
+(ns ppl-project-3.core)
+
+
+
+(comment problem a)
+(def pastrilist 
+  (memoize
+    (fn [ row col]
+      (println "calling pastrilist on " row "," col)
+      (cond 
+        
+        (< row 3) (do (println "break 1") 1)
+        (= row col) (do (println "break 2") 1)
+        (= col 1) (do (println "break 3") 1)
+        true (+ (pastrilist (- row 1) col) (if (> col 1)
+                                             (pastrilist (- row 1) (- col 1)))
+                )
+        )
+    )
+  )
+ )
+
+
+(defn mypastri [ row col ]
+  (cond
+    (< row 3) 1
+    (< row col) 0
+    (= row col) 1
+    (= col 1) 1
+    (= col 2) (- row 1)
+    (= col (- row 1)) (- row 1)
+    true (pastrilist row col)
+    )
+  ) 
+
+(comment problem b)
+
+(defn mymerge [ listA listB ]
+  (cond
+    (= (count listA) 0) (if (= (count listB) 0) 
+                          '()
+                          listB
+                          )
+    (= (count listB) 0) (if (= (count listA) 0) 
+                          '()
+                          listA
+                          )
+    (<= (first listA) (first listB)) (cons (first listA) (mymerge (rest listA) listB))
+    (<= (first listB) (first listA)) (cons (first listB) (mymerge listA (rest listB)))                                       
+    )  
+)
+
+(comment problem c)
+
+(defn mymergesort [ list ]
+  (cond
+    (> (count list) 1) (mymerge (mymergesort (take (/ (count list) 2) list)) (mymergesort (nthrest list (/ (count list) 2))))
+    true  list
+     )
+    )
+
+(comment problem d)
+
+
+(defn addToTree [valueToAdd tree]
+  
+  (cond
+    (empty? tree) (list valueToAdd nil nil)
+    :else (cond 
+            (< valueToAdd (first tree)) 
+                 (cons (first tree) (list (addToTree valueToAdd (second tree)) (nth tree 2)))
+            (> valueToAdd (first tree ))
+                 (cons (first tree) (list (second tree) (addToTree valueToAdd (nth tree 2) )))
+                                  
+            (=  valueToAdd (first tree ) )  tree
+            )
+    
+    )
+  
+  )
+
+(defn buildbst [valuelist bst] 
+  
+    (cond 
+      (empty? valuelist)  bst
+      :else (buildbst (rest valuelist) (addToTree (first valuelist) bst) )
+    
+    )
+  )
+
+(defn mybuildbst [valuelist]
+  
+     (buildbst valuelist ())
+     
+  
+  )
+
+(comment problem e)
+
+
+(comment index of tree test. Should yield ( 1 3 5 7 ) )
+(myiot '(3 (1 nil nil) (7 (5 nil nil) nil ) ) ))

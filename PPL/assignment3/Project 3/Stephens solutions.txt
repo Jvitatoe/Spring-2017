@@ -1,0 +1,130 @@
+;; Pascal's triangle code.
+(defn add-pairs [previous]
+	"Add all the pairs in the given list and concatenate a 1 on the end."
+	(if (nil? (second previous))
+		'(1N)
+		(cons (+ (first previous) (second previous)) (add-pairs (rest previous)))
+	)
+)
+
+(defn mypastri 
+	"Find n choose k using Pascal's triangle."
+	([n k] 
+		(mypastri n k '(1N) 0N)
+	)
+	([n k previous row]
+		(if (= row n)
+			(nth previous k)
+			(mypastri n k (cons 1N (add-pairs previous)) (+ row 1N))
+		)
+	)
+)
+
+;; Merging code.
+(defn mymerge
+	"Merge two independently sorted lists together into one sorted list."
+	([a b]
+		(mymerge a b '())
+	)
+	([a b sorted]
+		(if (and (= a ()) (= b ()))
+			sorted
+			(if (and (not= a ()) (not= b ()))
+				(if (< (first a) (first b))
+					(cons (first a) (mymerge (rest a) b sorted))
+					(cons (first b) (mymerge a (rest b) sorted))
+				)
+				(if (not= a ())
+					(cons (first a) (mymerge (rest a) b sorted))
+					(cons (first b) (mymerge a (rest b) sorted))
+				)
+			)
+		)
+	)
+)
+
+; Merge sort code.
+(defn first-half 
+	"Return the first half of a given list."
+	([data]
+		(first-half data (quot (count data) 2)))
+	([data middle]
+		(if (= middle 1)
+			(list (first data))
+			(cons (first data) (first-half (rest data) (- middle 1)))
+		)
+	)
+)
+
+(defn second-half 
+	"Return the second half of a given list."
+	([data]
+		(second-half data (quot (count data) 2))
+	)
+	([data middle] 
+		(if (= middle 1)
+			(rest data)
+			(second-half (rest data) (- middle 1))
+		)
+	)
+)
+
+(defn mymergesort [data]
+	"Sort a given list using the merge sort algorithm."
+	(if (= (second data) nil)
+		data
+		(mymerge (mymergesort (first-half data)) (mymergesort (second-half data)))
+	)
+)
+
+; Build BST code.
+(defn bst-add [item tree]
+		"Return the given tree with the given element inserted"
+	    ; Base case: check if the tree is empty.
+		(if (nil? tree)
+			; If the tree is empty return a new tree with the value at the root.
+			(list item nil nil)
+			
+			; Otherwise check if 
+			(if (< item (first tree))
+				(cons (first tree) (list (bst-add item (nth tree 1)) (nth tree 2)))
+			    (cons (first tree) (list (nth tree 1) (bst-add item (nth tree 2))))
+			)
+		)
+)
+
+(defn mybuildbst 
+	"Build a binary search tree from the given list."
+	([list]
+		(mybuildbst list nil)
+	)
+	([list tree]
+		(if (= list ())
+			tree
+			(mybuildbst (rest list) (bst-add (first list) tree))
+		)
+	)
+)
+
+; Inorder traversal code.
+(defn myiot [bst]
+	"Returns an inorder traversal of the given tree."
+	(if (nil? bst)
+		'()
+		(concat (myiot (nth bst 1)) (cons (first bst) (myiot (nth bst 2))))
+	)
+)
+
+; Test cases.
+(defn test-cases []
+	"Run given test cases. Can easily be added to."
+	(do
+		(println (str "(my-pas-tri 5 4)                              --> " (mypastri 5 4)))
+		(println (str "(my-merge '(1 4 7 11) '(3 5 6 10 12))         --> " (mymerge '(1 4 7 11) '(3 5 6 10 12))))
+		(println (str "(my-merge-sort '(3 1 7 5 2 6 4))              --> " (mymergesort '(3 1 7 5 2 6 4))))
+		(println (str "(my-build-bst '(3 1 7 5))                     --> " (mybuildbst '(3 1 7 5))))
+		(println (str "(my-iot '(3 (1 nil nil) (7 (5 nil nil) nil))) --> " (pr-str(myiot '(3 (1 nil nil) (7 (5 nil nil) nil))))))
+		
+		"Finished running test cases."
+	)
+)
